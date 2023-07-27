@@ -4,6 +4,8 @@ import kg.center.mayak.model.EmailDetails;
 import kg.center.mayak.service.EmailService;
 import kg.center.mayak.service.EmailServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,16 +14,19 @@ import javax.mail.MessagingException;
 
 
 @RestController
-@RequestMapping("/email")
 public class EmailController {
 
     @Autowired
     private EmailServiceImpl emailService;
 
-    @PostMapping("/sendMail")
-    public String sendMail(@RequestBody EmailDetails details) throws MessagingException {
+    @PostMapping("/api/sendMail")
+    public ResponseEntity<?> sendMail(@RequestBody EmailDetails details) throws MessagingException {
+        try {
         String status = emailService.sendSimpleMail(details);
-        return status;
+        return ResponseEntity.ok("Mail Sent Successfully...");
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error while Sending Mail");
+    }
     }
 
 //    @PostMapping("/sendMailWithAttachment")

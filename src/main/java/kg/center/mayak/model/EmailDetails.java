@@ -9,10 +9,12 @@ import lombok.NoArgsConstructor;
 public class EmailDetails {
 
     private String recipient;
+    private String message;
     private String msgBody;
     private String title;
     private String phone;
-    private String attachmentName;
-    private String attachmentPath;
+    private String fullName;
+//    private String attachmentName;
+//    private String attachmentPath;
 
 }

@@ -22,11 +22,12 @@ public class EmailServiceImpl implements EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(sender);
-            message.setTo(details.getRecipient());
+            message.setTo("edi.amanturov@gmail.com");
 
-            // Including the phone number in the email body
-            String emailBodyWithPhone = details.getMsgBody() + "\nPhone: " + details.getPhone();
-            message.setText(emailBodyWithPhone);
+            // Including the phone number and full name in the email body
+            String emailBodyWithPhoneAndName = details.getMessage() + "\nТелефон: " + details.getPhone()
+                    + "\nФИО: " + details.getFullName() + "\nПочта: " + details.getRecipient();
+            message.setText(emailBodyWithPhoneAndName);
 
             message.setSubject(details.getTitle());
 
@@ -37,6 +38,7 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 }
+
 
 //    public String sendMailWithAttachment(EmailDetails details) throws MessagingException {
 //        try {

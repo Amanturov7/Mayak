@@ -53,7 +53,7 @@ import kg.center.mayak.service.UserDetailsImpl;
 import kg.center.mayak.configs.jwt.JwtUtils;
 import kg.center.mayak.RequestResponse.JwtResponse;
 import kg.center.mayak.RequestResponse.LoginRequest;
-import kg.center.mayak.RequestResponse.MessageResponse;
+import kg.center.mayak.RequestResponse.msgBodyResponse;
 import kg.center.mayak.RequestResponse.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +71,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/auth")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
 
@@ -90,7 +89,8 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/signin")
+    @CrossOrigin(origins = "*")
+    @PostMapping("/api/signin")
     public ResponseEntity<?> authUser(@RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager
@@ -112,65 +112,65 @@ public class AuthController {
                 userDetails.getEmail(),
                 roles));
     }
-
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
-
-        if (userRespository.existsByUsername(signupRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is exist"));
-        }
-
-        if (userRespository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is exist"));
-        }
-
-        User user = new User(signupRequest.getUsername(),
-                signupRequest.getEmail(),
-                signupRequest.getFirstName(),
-                signupRequest.getAge(),
-                signupRequest.getLastName(),
-                passwordEncoder.encode(signupRequest.getPassword()));
-
-        Set<String> reqRoles = signupRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
-
-        if (reqRoles == null) {
-            Role caRole = roleRepository
-                    .findByName(ERole.ROLE_CA)
-                    .orElseThrow(() -> new RuntimeException("Error, Role CA is not found"));
-            roles.add(caRole);
-        } else {
-            reqRoles.forEach(r -> {
-                switch (r) {
-                    case "ruvh":
-                        Role ruvhRole = roleRepository
-                                .findByName(ERole.ROLE_RUVH)
-                                .orElseThrow(() -> new RuntimeException("Error, Role Ruvh is not found"));
-                        roles.add(ruvhRole);
-
-                        break;
-                    case "region":
-                        Role regionRole = roleRepository
-                                .findByName(ERole.ROLE_REGION)
-                                .orElseThrow(() -> new RuntimeException("Error, Role Region is not found"));
-                        roles.add(regionRole);
-
-                        break;
-
-                    default:
-                        regionRole = roleRepository
-                                .findByName(ERole.ROLE_REGION)
-                                .orElseThrow(() -> new RuntimeException("Error, Role Region is not found"));
-                        roles.add(regionRole);
-                }
-            });
-        }
-        user.setRoles(roles);
-        userRespository.save(user);
-        return ResponseEntity.ok(new MessageResponse("User CREATED"));
-    }
+//
+//    @PostMapping("/signup")
+//    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
+//
+//        if (userRespository.existsByUsername(signupRequest.getUsername())) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(new msgBodyResponse("Error: Username is exist"));
+//        }
+//
+//        if (userRespository.existsByEmail(signupRequest.getEmail())) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(new msgBodyResponse("Error: Email is exist"));
+//        }
+//
+//        User user = new User(signupRequest.getUsername(),
+//                signupRequest.getEmail(),
+//                signupRequest.getFirstName(),
+//                signupRequest.getAge(),
+//                signupRequest.getLastName(),
+//                passwordEncoder.encode(signupRequest.getPassword()));
+//
+//        Set<String> reqRoles = signupRequest.getRoles();
+//        Set<Role> roles = new HashSet<>();
+//
+//        if (reqRoles == null) {
+//            Role caRole = roleRepository
+//                    .findByName(ERole.ROLE_CA)
+//                    .orElseThrow(() -> new RuntimeException("Error, Role CA is not found"));
+//            roles.add(caRole);
+//        } else {
+//            reqRoles.forEach(r -> {
+//                switch (r) {
+//                    case "ruvh":
+//                        Role ruvhRole = roleRepository
+//                                .findByName(ERole.ROLE_RUVH)
+//                                .orElseThrow(() -> new RuntimeException("Error, Role Ruvh is not found"));
+//                        roles.add(ruvhRole);
+//
+//                        break;
+//                    case "region":
+//                        Role regionRole = roleRepository
+//                                .findByName(ERole.ROLE_REGION)
+//                                .orElseThrow(() -> new RuntimeException("Error, Role Region is not found"));
+//                        roles.add(regionRole);
+//
+//                        break;
+//
+//                    default:
+//                        regionRole = roleRepository
+//                                .findByName(ERole.ROLE_REGION)
+//                                .orElseThrow(() -> new RuntimeException("Error, Role Region is not found"));
+//                        roles.add(regionRole);
+//                }
+//            });
+//        }
+//        user.setRoles(roles);
+//        userRespository.save(user);
+//        return ResponseEntity.ok(new msgBodyResponse("User CREATED"));
+//    }
 }
