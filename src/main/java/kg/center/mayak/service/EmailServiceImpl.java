@@ -22,7 +22,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(sender);
-            message.setTo("edi.amanturov@gmail.com");
+            message.setTo("rebcentermayakbishkek@gmail.com");
 
             // Including the phone number and full name in the email body
             String emailBodyWithPhoneAndName = details.getMessage() + "\nТелефон: " + details.getPhone()
