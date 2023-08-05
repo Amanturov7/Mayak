@@ -5,6 +5,8 @@ import kg.center.mayak.repository.PhotoRepository;
 import kg.center.mayak.service.PhotoService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,5 +62,33 @@ public class PhotoServiceImpl implements PhotoService {
         photo.setImageData(imageData);
         photoRepository.save(photo);
     }
+    @Override
+    public ResponseEntity<String> deletePhoto(Long photoId) {
+        try {
+            Photo photo = photoRepository.findById(photoId).orElse(null);
+            if (photo == null) {
+                return new ResponseEntity<>("Фотография не найдена", HttpStatus.NOT_FOUND);
+            }
+
+            String projectDir = System.getProperty("user.dir");
+            String uploadDir = projectDir + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "uploaded-photos";
+            String fileName = photo.getFileName();
+            File file = new File(uploadDir, fileName);
+
+            if (!file.exists()) {
+                return new ResponseEntity<>("Файл фотографии не найден", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            if (file.delete()) {
+                photoRepository.delete(photo);
+                return new ResponseEntity<>("Фотография успешно удалена", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Ошибка при удалении файла фотографии", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>("Ошибка при удалении фотографии: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

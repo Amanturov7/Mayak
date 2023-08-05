@@ -4,10 +4,7 @@ import kg.center.mayak.model.Photo;
 import kg.center.mayak.repository.PhotoRepository;
 import kg.center.mayak.service.PhotoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +17,10 @@ public class PhotoController {
 
     @Autowired
     private PhotoService photoService;
+
+    @Autowired
+    private PhotoRepository photoRepository;
+
 
     @GetMapping("/api/getAllPhotos")
     public ResponseEntity<List<Photo>> getAllPhotos() {
@@ -34,6 +35,9 @@ public class PhotoController {
         if (photo != null) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.IMAGE_JPEG); // Или другой MediaType в зависимости от типа изображений
+            headers.setCacheControl(CacheControl.noCache().getHeaderValue()); // Запрет кэширования
+            headers.setPragma("no-cache"); // Запрет кэширования для старых браузеров
+            headers.setContentType(MediaType.IMAGE_JPEG); // Или другой MediaType в зависимости от типа изображений
             return new ResponseEntity<>(photo.getImageData(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -43,5 +47,9 @@ public class PhotoController {
     public String uploadPhoto(@RequestParam("file") MultipartFile file) throws IOException {
         photoService.uploadPhoto(file);
         return "Файл успешно загружен";
+    }
+    @DeleteMapping("/api/deletePhoto/{photoId}")
+    public ResponseEntity<String> deletePhoto(@PathVariable Long photoId) {
+        return photoService.deletePhoto(photoId);
     }
 }
